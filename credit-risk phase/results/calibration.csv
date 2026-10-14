@@ -1,0 +1,5 @@
+dataset,probabilities,brier
+German,raw,0.1742
+German,sigmoid-calibrated,0.1606
+Taiwan,raw,0.1656
+Taiwan,sigmoid-calibrated,0.142

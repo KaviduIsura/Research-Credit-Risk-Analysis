@@ -1,0 +1,7 @@
+dataset,attribute,demographic_parity_gap,equal_opportunity_gap,FPR_gap
+German,sex,0.113,0.007,0.127
+German,age,0.214,0.06,0.242
+German,foreign_worker,0.353,0.098,0.335
+Taiwan,sex,0.035,0.022,0.028
+Taiwan,marriage,0.317,0.156,0.28
+Taiwan,age,0.095,0.07,0.078
