@@ -4,3 +4,4 @@ __pycache__/
 data/raw/*
 !data/raw/README.md
 results/*.json
+.pytest_cache/
