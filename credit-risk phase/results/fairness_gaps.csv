@@ -1,7 +1,9 @@
-dataset,attribute,demographic_parity_gap,equal_opportunity_gap,FPR_gap
-German,sex,0.113,0.007,0.127
-German,age,0.214,0.06,0.242
-German,foreign_worker,0.353,0.098,0.335
-Taiwan,sex,0.035,0.022,0.028
-Taiwan,marriage,0.317,0.156,0.28
-Taiwan,age,0.095,0.07,0.078
+attribute,group,n,base_rate,selection_rate,TPR,FPR
+German: Age (<25),Age < 25,149,0.409,0.846,0.951,0.773
+German: Age (<25),Age >= 25,851,0.281,0.632,0.891,0.531
+German: Foreign Worker,Domestic,37,0.108,0.324,1.0,0.242
+German: Foreign Worker,Foreign,963,0.307,0.677,0.902,0.577
+Taiwan: Sex,Female,1816,0.216,0.17,0.459,0.091
+Taiwan: Sex,Male,1184,0.239,0.205,0.481,0.119
+Taiwan: Age (<30),Age < 30,937,0.229,0.187,0.474,0.101
+Taiwan: Age (<30),Age >= 30,2063,0.223,0.183,0.465,0.102

@@ -16,12 +16,17 @@ Follow `data/raw/README.md` (UCI originals, two files into `data/raw/`).
     python -m ipykernel install --user --name credit-risk-phase2
 
 ## 4. Run the notebook
-Open `notebooks/Phase2_Credit_Risk_Improved.ipynb`, select the "credit-risk-phase2" kernel (install the Jupyter extension from the Extensions panel if cells do not run).
-- First run with `QUICK_TEST = True` (minutes).
-- Then `QUICK_TEST = False`, `DATASETS = ["German"]`, run all.
-- Then add `"Taiwan"` (slow: leave it running; finished runs are cached in `results/`).
+Open `notebooks/Phase2_Credit_Risk_Improved.ipynb`, select the Python 3 (.venv) kernel.
+- Execution mode can be toggled via `QUICK_TEST` in `src/config.py` (True for quick check, False for full run).
+- The notebook imports from the modular package in `src/`.
+- All metrics and figures are automatically saved to `results/`.
 
-## 5. Use the agent (Agent Manager, Planning mode)
-Type `/` in the agent chat to run a workflow. Useful first prompt:
-
-> Read AGENTS.md and docs/. Run /setup-env, then /run-quick-check. Then run /audit-pipeline and list any risks before I start the full run. Do not change code without asking.
+## 5. Project Structure
+```
+credit-risk phase/
+├── data/raw/              # UCI raw datasets (German Credit & Taiwan Default)
+├── docs/                  # Coursework descriptors & research paper
+├── notebooks/             # Deliverable notebook: Phase2_Credit_Risk_Improved.ipynb
+├── src/                   # Modular Python package (loaders, pipelines, metrics, audits)
+└── results/               # Generated benchmarks, figures, and CSV tables
+```

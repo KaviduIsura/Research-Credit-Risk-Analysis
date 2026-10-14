@@ -1,5 +1,3 @@
-dataset,probabilities,brier
-German,raw,0.1742
-German,sigmoid-calibrated,0.1606
-Taiwan,raw,0.1656
-Taiwan,sigmoid-calibrated,0.142
+dataset,model,variant,brier_raw,brier_calibrated
+German,XGBoost,fixed_none,0.1742,0.1606
+Taiwan,XGBoost,fixed_none,0.1656,0.142
