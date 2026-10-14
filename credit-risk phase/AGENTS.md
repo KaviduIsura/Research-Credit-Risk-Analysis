@@ -27,7 +27,7 @@ specificity, precision, F1. Authors' headline results: German MLP + SMOTE-ENN F1
 7. No fairness audit, no calibration check -> Stage E of the notebook.
 
 ## Deliverable
-`notebooks/Phase2_Credit_Risk_Improved.ipynb` (clean, commented, reproducible; runs top-to-bottom with Restart & Run All).
+`notebooks/credit_risk.ipynb` (clean, commented, reproducible; runs top-to-bottom with Restart & Run All).
 
 ## Definition of done
 - Notebook runs end to end with `QUICK_TEST = False` on both datasets, outputs saved, results in `results/`.

@@ -16,7 +16,7 @@ Follow `data/raw/README.md` (UCI originals, two files into `data/raw/`).
     python -m ipykernel install --user --name credit-risk-phase2
 
 ## 4. Run the notebook
-Open `notebooks/Phase2_Credit_Risk_Improved.ipynb`, select the Python 3 (.venv) kernel.
+Open `notebooks/credit_risk.ipynb`, select the Python 3 (.venv) kernel.
 - Execution mode can be toggled via `QUICK_TEST` in `src/config.py` (True for quick check, False for full run).
 - The notebook imports from the modular package in `src/`.
 - All metrics and figures are automatically saved to `results/`.
@@ -26,7 +26,7 @@ Open `notebooks/Phase2_Credit_Risk_Improved.ipynb`, select the Python 3 (.venv) 
 credit-risk phase/
 ├── data/raw/              # UCI raw datasets (German Credit & Taiwan Default)
 ├── docs/                  # Coursework descriptors & research paper
-├── notebooks/             # Deliverable notebook: Phase2_Credit_Risk_Improved.ipynb
+├── notebooks/             # Deliverable notebook: credit_risk.ipynb
 ├── src/                   # Modular Python package (loaders, pipelines, metrics, audits)
 └── results/               # Generated benchmarks, figures, and CSV tables
 ```
