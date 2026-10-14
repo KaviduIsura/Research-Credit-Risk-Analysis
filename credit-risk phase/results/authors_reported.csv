@@ -1,0 +1,104 @@
+﻿# SOURCE: jrfm-19-00210(1).pdf  |  J. Risk Financial Manag. 2026, 19, 210
+# TABLE 5: Performance on the German credit dataset (paper p.15-16, PDF pages 14-15 of 21)
+# TABLE 6: Performance on the Taiwanese credit dataset (paper p.16-17, PDF pages 16-17 of 21)
+#
+# F1 DEFINITION (from paper text, p.13-14 of 21):
+#   F1 score is defined as the harmonic mean of precision and recall, measuring
+#   performance on the MINORITY class only (bad credit / default).
+#   The paper does NOT state binary/macro/weighted; context implies binary F1 (pos_label=minority).
+#
+# HYPERPARAMETERS (Table 4, paper p.13 of 21):
+#   LR:   solver=liblinear
+#   SVM:  kernel=RBF
+#   DT:   max_depth=None
+#   RF:   n_estimators=100
+#   XGB:  learning_rate=0.1, max_depth=6, n_estimators=100
+#   ADB:  n_estimators=50
+#   MLP:  hidden_layers=[128,64,32], output=Softmax, optimizer=Adam(lr=0.001), batch=32, epochs=80(early_stop)
+#   CNN:  n_filters=[64,128], kernel=3, activation=ReLU, output=Softmax, optimizer=Adam(lr=0.0005), batch=64, epochs=40(early_stop)
+#   LSTM: units=100, activation=Tanh, output=Sigmoid, optimizer=Adam(lr=0.0005), batch=64, epochs=60(dropout=0.3)
+#   GRU:  units=80, activation=Tanh, output=Sigmoid, optimizer=RMSprop(lr=0.001), batch=128, epochs=50(dropout=0.2)
+#
+# RELIABILITY: All values read from browser-rendered PDF screenshots (multiple cross-verified captures).
+# No value estimated. German SMOTE XGBoost Specificity=0.846 confirmed in two independent screenshots.
+dataset,table,paper_page,resampling,model,accuracy,recall,specificity,precision,f1_score,notes
+German,Table5,15,No Resampling,Logistic Regression,0.705,0.943,0.136,0.723,0.818,
+German,Table5,15,No Resampling,SVM,0.750,1.000,0.153,0.738,0.849,
+German,Table5,15,No Resampling,Decision Tree,0.645,0.738,0.424,0.754,0.746,
+German,Table5,15,No Resampling,Random Forest,0.800,0.940,0.407,0.783,0.834,
+German,Table5,15,No Resampling,XGBoost,0.760,0.851,0.576,0.816,0.833,
+German,Table5,15,No Resampling,AdaBoost,0.760,0.915,0.390,0.782,0.843,
+German,Table5,15,No Resampling,MLP,0.772,0.872,0.525,0.800,0.842,
+German,Table5,15,No Resampling,CNN,0.775,0.908,0.458,0.800,0.850,
+German,Table5,15,No Resampling,LSTM,0.720,0.894,0.305,0.754,0.818,
+German,Table5,15,No Resampling,GRU,0.735,0.747,0.594,0.824,0.809,
+German,Table5,15,SMOTE,Logistic Regression,0.635,0.709,0.458,0.758,0.733,
+German,Table5,15,SMOTE,SVM,0.695,0.783,0.504,0.808,0.775,
+German,Table5,15,SMOTE,Decision Tree,0.655,0.723,0.492,0.773,0.747,
+German,Table5,15,SMOTE,Random Forest,0.760,0.851,0.576,0.816,0.833,
+German,Table5,15,SMOTE,XGBoost,0.763,0.864,0.846,0.816,0.833,
+German,Table5,15,SMOTE,AdaBoost,0.705,0.773,0.542,0.801,0.787,
+German,Table5,15,SMOTE,MLP,0.771,0.732,0.817,0.820,0.773,
+German,Table5,15,SMOTE,CNN,0.714,0.624,0.817,0.795,0.699,
+German,Table5,15,SMOTE,LSTM,0.739,0.644,0.847,0.828,0.725,
+German,Table5,15,SMOTE,GRU,0.746,0.698,0.802,0.800,0.746,
+German,Table5,16,ENN,Logistic Regression,0.575,0.553,0.627,0.780,0.647,
+German,Table5,16,ENN,SVM,0.610,0.553,0.744,0.786,0.667,
+German,Table5,16,ENN,Decision Tree,0.610,0.610,0.780,0.869,0.717,
+German,Table5,16,ENN,Random Forest,0.675,0.638,0.763,0.865,0.735,
+German,Table5,16,ENN,XGBoost,0.630,0.596,0.712,0.832,0.694,
+German,Table5,16,ENN,AdaBoost,0.670,0.640,0.780,0.871,0.727,
+German,Table5,16,ENN,MLP,0.844,0.821,0.861,0.821,0.821,
+German,Table5,16,ENN,CNN,0.797,0.714,0.861,0.800,0.755,
+German,Table5,16,ENN,LSTM,0.750,0.643,0.833,0.750,0.692,
+German,Table5,16,ENN,GRU,0.750,0.625,0.847,0.761,0.686,
+German,Table5,16,SMOTE-ENN,Logistic Regression,0.570,0.582,0.542,0.752,0.656,
+German,Table5,16,SMOTE-ENN,SVM,0.615,0.624,0.593,0.786,0.696,
+German,Table5,16,SMOTE-ENN,Decision Tree,0.630,0.640,0.593,0.777,0.718,
+German,Table5,16,SMOTE-ENN,Random Forest,0.680,0.738,0.542,0.794,0.765,
+German,Table5,16,SMOTE-ENN,XGBoost,0.670,0.702,0.593,0.805,0.750,
+German,Table5,16,SMOTE-ENN,AdaBoost,0.615,0.652,0.525,0.795,0.705,
+German,Table5,16,SMOTE-ENN,MLP,0.954,0.929,0.968,0.945,0.937,BEST GERMAN
+German,Table5,16,SMOTE-ENN,CNN,0.934,0.893,0.958,0.926,0.909,
+German,Table5,16,SMOTE-ENN,LSTM,0.927,0.911,0.933,0.895,0.903,
+German,Table5,16,SMOTE-ENN,GRU,0.914,0.839,0.958,0.922,0.879,
+Taiwan,Table6,17,No Resampling,Logistic Regression,0.810,0.235,0.971,0.691,0.351,
+Taiwan,Table6,17,No Resampling,SVM,0.820,0.331,0.957,0.682,0.446,
+Taiwan,Table6,17,No Resampling,Decision Tree,0.724,0.409,0.813,0.380,0.394,
+Taiwan,Table6,17,No Resampling,Random Forest,0.817,0.361,0.944,0.640,0.463,
+Taiwan,Table6,17,No Resampling,XGBoost,0.817,0.376,0.940,0.637,0.473,
+Taiwan,Table6,17,No Resampling,AdaBoost,0.816,0.308,0.958,0.674,0.423,
+Taiwan,Table6,17,No Resampling,MLP,0.810,0.303,0.943,0.622,0.433,
+Taiwan,Table6,17,No Resampling,CNN,0.796,0.179,0.969,0.618,0.278,
+Taiwan,Table6,17,No Resampling,LSTM,0.807,0.349,0.935,0.600,0.441,
+Taiwan,Table6,17,No Resampling,GRU,0.812,0.331,0.947,0.637,0.436,
+Taiwan,Table6,17,SMOTE,Logistic Regression,0.688,0.582,0.718,0.366,0.449,
+Taiwan,Table6,17,SMOTE,SVM,0.749,0.583,0.795,0.444,0.504,
+Taiwan,Table6,17,SMOTE,Decision Tree,0.694,0.488,0.752,0.355,0.411,
+Taiwan,Table6,17,SMOTE,Random Forest,0.763,0.487,0.866,0.504,0.495,
+Taiwan,Table6,17,SMOTE,XGBoost,0.763,0.464,0.846,0.468,0.461,
+Taiwan,Table6,17,SMOTE,AdaBoost,0.733,0.586,0.773,0.420,0.490,
+Taiwan,Table6,17,SMOTE,MLP,0.726,0.538,0.779,0.405,0.462,
+Taiwan,Table6,17,SMOTE,CNN,0.736,0.483,0.809,0.415,0.446,
+Taiwan,Table6,17,SMOTE,LSTM,0.756,0.590,0.802,0.455,0.514,
+Taiwan,Table6,17,SMOTE,GRU,0.703,0.697,0.705,0.398,0.507,
+Taiwan,Table6,17,ENN,Logistic Regression,0.803,0.447,0.902,0.562,0.498,
+Taiwan,Table6,17,ENN,SVM,0.803,0.490,0.891,0.557,0.521,
+Taiwan,Table6,17,ENN,Decision Tree,0.669,0.593,0.690,0.349,0.439,
+Taiwan,Table6,17,ENN,Random Forest,0.778,0.553,0.841,0.493,0.521,
+Taiwan,Table6,17,ENN,XGBoost,0.767,0.580,0.820,0.474,0.521,
+Taiwan,Table6,17,ENN,AdaBoost,0.786,0.549,0.852,0.510,0.529,
+Taiwan,Table6,17,ENN,MLP,0.772,0.356,0.772,0.482,0.516,
+Taiwan,Table6,17,ENN,CNN,0.787,0.302,0.922,0.521,0.383,
+Taiwan,Table6,17,ENN,LSTM,0.760,0.621,0.799,0.463,0.531,
+Taiwan,Table6,17,ENN,GRU,0.789,0.524,0.864,0.518,0.521,
+Taiwan,Table6,17,SMOTE-ENN,Logistic Regression,0.593,0.746,0.550,0.317,0.445,
+Taiwan,Table6,17,SMOTE-ENN,SVM,0.647,0.741,0.621,0.354,0.479,
+Taiwan,Table6,17,SMOTE-ENN,Decision Tree,0.660,0.601,0.677,0.343,0.436,
+Taiwan,Table6,17,SMOTE-ENN,Random Forest,0.821,0.745,0.842,0.512,0.610,BEST TAIWAN
+Taiwan,Table6,17,SMOTE-ENN,XGBoost,0.708,0.632,0.729,0.395,0.486,
+Taiwan,Table6,17,SMOTE-ENN,AdaBoost,0.652,0.733,0.629,0.356,0.479,
+Taiwan,Table6,17,SMOTE-ENN,MLP,0.651,0.714,0.633,0.353,0.472,
+Taiwan,Table6,17,SMOTE-ENN,CNN,0.606,0.701,0.580,0.318,0.438,
+Taiwan,Table6,17,SMOTE-ENN,LSTM,0.647,0.767,0.613,0.357,0.487,
+Taiwan,Table6,17,SMOTE-ENN,GRU,0.679,0.720,0.667,0.377,0.495,
