@@ -9,3 +9,7 @@ xlrd
 openpyxl
 jupyter
 ipykernel
+fastapi
+uvicorn
+pydantic
+pytest
