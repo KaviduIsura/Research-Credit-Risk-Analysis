@@ -1,4 +1,4 @@
-Model,Variant,AvgThreshold,Accuracy,Recall,Precision,Specificity,F1-Score,MCC,PR-AUC,ROC-AUC,FinancialCost
-Random Forest,Cost/MCC-Tuned (enhanced_none),0.58,0.808,0.498,0.579,0.896,0.533,0.417,0.559,0.782,1905.5
-XGBoost,Cost/MCC-Tuned (enhanced_none),0.65,0.81,0.486,0.589,0.902,0.53,0.417,0.562,0.785,1933.1
-Logistic Regression,Cost/MCC-Tuned (enhanced_none),0.66,0.814,0.454,0.611,0.916,0.518,0.414,0.548,0.775,2007.4
+Accuracy,Recall,Specificity,Precision,F1-Score,MCC,PR-AUC,ROC-AUC,FinancialCost,Model,Variant,AvgThreshold
+0.808,0.498,0.896,0.579,0.533,0.417,0.559,0.782,1905.5,Random Forest,Cost/MCC-Tuned (enhanced_none),0.58
+0.81,0.486,0.902,0.589,0.53,0.417,0.562,0.785,1933.1,XGBoost,Cost/MCC-Tuned (enhanced_none),0.65
+0.814,0.454,0.916,0.611,0.518,0.414,0.548,0.775,2007.4,Logistic Regression,Cost/MCC-Tuned (enhanced_none),0.66

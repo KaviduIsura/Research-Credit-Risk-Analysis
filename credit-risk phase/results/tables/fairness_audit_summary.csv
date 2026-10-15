@@ -1,3 +1,3 @@
-Protected Attribute,Demographic Parity Gap,Equal Opportunity Gap (Recall TPR),Regulatory Compliance
+Protected Attribute,Demographic Parity Gap,Equal Opportunity Gap,Compliance
 Gender (SEX),0.036,0.021,Acceptable (Gap < 0.10)
 Age Group,0.017,0.035,Acceptable (Gap < 0.10)
