@@ -1,17 +1,17 @@
-Dataset,Resampling,Model,Accuracy,Recall,Specificity,Precision,F1-Score,Time(s)
-German,No Resampling,MLP,0.75,0.43,0.887,0.625,0.499,3.1
-German,No Resampling,Random Forest,0.773,0.393,0.936,0.728,0.507,2.0
-German,No Resampling,XGBoost,0.752,0.457,0.879,0.619,0.523,0.7
-German,No Resampling,Logistic Regression,0.752,0.47,0.873,0.614,0.531,0.2
-German,SMOTE,MLP,0.736,0.52,0.829,0.566,0.54,6.1
-German,SMOTE,Random Forest,0.76,0.457,0.89,0.648,0.532,2.0
-German,SMOTE,XGBoost,0.752,0.49,0.864,0.607,0.54,1.3
-German,SMOTE,Logistic Regression,0.723,0.693,0.736,0.532,0.601,0.3
-German,ENN,MLP,0.694,0.757,0.667,0.494,0.597,2.7
-German,ENN,Random Forest,0.696,0.72,0.686,0.496,0.587,2.1
-German,ENN,XGBoost,0.686,0.737,0.664,0.485,0.585,0.8
-German,ENN,Logistic Regression,0.703,0.747,0.684,0.504,0.601,0.3
-German,SMOTE-ENN,MLP,0.666,0.773,0.62,0.466,0.581,3.7
-German,SMOTE-ENN,Random Forest,0.681,0.74,0.656,0.481,0.582,2.3
-German,SMOTE-ENN,XGBoost,0.677,0.763,0.64,0.478,0.587,1.4
-German,SMOTE-ENN,Logistic Regression,0.651,0.81,0.583,0.455,0.582,0.5
+Dataset,Resampling,Model,Accuracy,Recall,Specificity,Precision,F1-Score,Time
+German,No Resampling,MLP,0.75,0.43,0.887,0.625,0.499,3s
+German,No Resampling,Random Forest,0.773,0.393,0.936,0.728,0.507,2s
+German,No Resampling,XGBoost,0.752,0.457,0.879,0.619,0.523,1s
+German,No Resampling,Logistic Regression,0.752,0.47,0.873,0.614,0.531,0s
+German,SMOTE,MLP,0.736,0.52,0.829,0.566,0.54,6s
+German,SMOTE,Random Forest,0.76,0.457,0.89,0.648,0.532,2s
+German,SMOTE,XGBoost,0.752,0.49,0.864,0.607,0.54,1s
+German,SMOTE,Logistic Regression,0.723,0.693,0.736,0.532,0.601,0s
+German,ENN,MLP,0.694,0.757,0.667,0.494,0.597,3s
+German,ENN,Random Forest,0.696,0.72,0.686,0.496,0.587,2s
+German,ENN,XGBoost,0.686,0.737,0.664,0.485,0.585,1s
+German,ENN,Logistic Regression,0.703,0.747,0.684,0.504,0.601,0s
+German,SMOTE-ENN,MLP,0.666,0.773,0.62,0.466,0.581,3s
+German,SMOTE-ENN,Random Forest,0.681,0.74,0.656,0.481,0.582,2s
+German,SMOTE-ENN,XGBoost,0.677,0.763,0.64,0.478,0.587,1s
+German,SMOTE-ENN,Logistic Regression,0.651,0.81,0.583,0.455,0.582,0s

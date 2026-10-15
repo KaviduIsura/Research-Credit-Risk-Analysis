@@ -3,7 +3,7 @@ Credit Risk Analysis & Research Paper Replication Package.
 Paper: Performance Evaluation of Machine Learning and Deep Learning Models for Credit Risk Prediction (JRFM 2026).
 """
 
-from src.config import SEED, QUICK_TEST, DATASETS, RESAMPLING_METHODS, MODELS_ALL
+from src.config import SEED, DATASETS, RESAMPLING_METHODS, MODELS_ALL, OUTER_FOLDS, INNER_FOLDS
 from src.data_loader import load_german_data, load_taiwan_data, load_dataset
 from src.models import create_model
 from src.resampling import get_resampler, apply_resampling
@@ -13,10 +13,11 @@ from src.interpretability import explain_with_shap
 
 __all__ = [
     "SEED",
-    "QUICK_TEST",
     "DATASETS",
     "RESAMPLING_METHODS",
     "MODELS_ALL",
+    "OUTER_FOLDS",
+    "INNER_FOLDS",
     "load_german_data",
     "load_taiwan_data",
     "load_dataset",

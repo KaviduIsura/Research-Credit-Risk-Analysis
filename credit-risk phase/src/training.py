@@ -2,14 +2,15 @@
 Cross-Validation and Training Engine.
 Strictly implements Algorithm 1 from Section 3.6 of the research paper:
   - 10-Fold Stratified Cross-Validation (Outer Loop)
-  - Nested 5-Fold Stratified Cross-Validation for Hyperparameter Tuning (Inner Loop)
   - Resampling strictly applied within training folds to avoid data leakage
   - Tracking of Accuracy, Recall, Specificity, Precision, and F1-Score
+  - Dynamic execution timer and Remaining Time (ETA) calculation via tqdm
 """
 
 import time
 import numpy as np
 import pandas as pd
+from tqdm.auto import tqdm
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
@@ -18,6 +19,15 @@ from src.config import SEED, OUTER_FOLDS, INNER_FOLDS
 from src.metrics import compute_metrics, aggregate_fold_metrics
 from src.resampling import get_resampler, apply_resampling
 from src.models import create_model
+
+
+def format_duration(seconds):
+    """Format seconds into readable Xm Ys or Xs."""
+    if seconds < 60:
+        return f"{seconds:.0f}s"
+    mins = int(seconds // 60)
+    secs = int(seconds % 60)
+    return f"{mins}m {secs:02d}s"
 
 
 def build_preprocessor(cat_cols, num_cols):
@@ -46,7 +56,7 @@ def run_experiment(
     verbose=True
 ):
     """
-    Executes Algorithm 1:
+    Executes Algorithm 1 across n_outer_folds with timing feedback:
       1. Stratified K-fold outer split.
       2. In-fold feature transformation (scaling + one-hot).
       3. In-fold resampling (None, SMOTE, ENN, SMOTE-ENN).
@@ -64,7 +74,7 @@ def run_experiment(
     last_preprocessor = None
     
     if verbose:
-        print(f"--> Running: Model='{model_name}' | Resampling='{resampling_method}' | Folds={n_outer_folds}")
+        print(f"--> Training: Model='{model_name}' | Resampling='{resampling_method}' ({n_outer_folds} Folds)")
         
     for fold, (train_idx, val_idx) in enumerate(skf.split(X, y), start=1):
         # Step 1: Split D into D_train and D_val
@@ -99,7 +109,7 @@ def run_experiment(
     mean_metrics, std_metrics = aggregate_fold_metrics(fold_metrics)
     
     if verbose:
-        print(f"    Done in {elapsed:.1f}s | F1: {mean_metrics['F1-Score']:.3f} ± {std_metrics['F1-Score']:.3f} | Acc: {mean_metrics['Accuracy']:.3f} | Rec: {mean_metrics['Recall']:.3f}")
+        print(f"    Completed in {format_duration(elapsed)} | F1: {mean_metrics['F1-Score']:.3f} ± {std_metrics['F1-Score']:.3f} | Acc: {mean_metrics['Accuracy']:.3f} | Rec: {mean_metrics['Recall']:.3f}")
         
     return {
         "model": model_name,
@@ -128,7 +138,7 @@ def run_benchmark_matrix(
 ):
     """
     Runs a full matrix of Models x Resampling methods on a dataset,
-    producing a formatted DataFrame matching Table 5 or Table 6 of the paper.
+    providing an interactive tqdm progress bar and dynamic Remaining Time (ETA) calculation.
     """
     if models is None:
         from src.config import PRIMARY_MODELS
@@ -138,40 +148,68 @@ def run_benchmark_matrix(
         from src.config import RESAMPLING_METHODS
         resampling_methods = RESAMPLING_METHODS
         
+    total_experiments = len(resampling_methods) * len(models)
     results_rows = []
     
     print(f"\n=======================================================")
-    print(f"BENCHMARK RUN: {dataset_name} Credit Dataset")
-    print(f"Models: {models}")
-    print(f"Resampling: {resampling_methods}")
-    print(f"=======================================================")
+    print(f"BENCHMARK RUN: {dataset_name} Credit Dataset ({len(X):,} instances)")
+    print(f"Total Model Configurations: {total_experiments} ({len(resampling_methods)} Resampling x {len(models)} Models)")
+    print(f"Cross-Validation: {n_outer_folds}-Fold Stratified CV per configuration")
+    print(f"=======================================================\n")
     
-    for res_name in resampling_methods:
-        for m_name in models:
-            res = run_experiment(
-                X=X,
-                y=y,
-                cat_cols=cat_cols,
-                num_cols=num_cols,
-                model_name=m_name,
-                resampling_method=res_name,
-                n_outer_folds=n_outer_folds,
-                seed=seed,
-                verbose=True
-            )
-            
-            m = res["mean_metrics"]
-            results_rows.append({
-                "Dataset": dataset_name,
-                "Resampling": res_name,
-                "Model": m_name,
-                "Accuracy": round(m["Accuracy"], 3),
-                "Recall": round(m["Recall"], 3),
-                "Specificity": round(m["Specificity"], 3),
-                "Precision": round(m["Precision"], 3),
-                "F1-Score": round(m["F1-Score"], 3),
-                "Time(s)": round(res["elapsed_seconds"], 1)
-            })
-            
+    matrix_start_time = time.time()
+    current_idx = 0
+    
+    with tqdm(total=total_experiments, desc=f"Training {dataset_name}", unit="model") as pbar:
+        for res_name in resampling_methods:
+            for m_name in models:
+                current_idx += 1
+                
+                # Update progress bar description
+                pbar.set_description(f"[{current_idx}/{total_experiments}] {dataset_name} -> {m_name} ({res_name})")
+                
+                res = run_experiment(
+                    X=X,
+                    y=y,
+                    cat_cols=cat_cols,
+                    num_cols=num_cols,
+                    model_name=m_name,
+                    resampling_method=res_name,
+                    n_outer_folds=n_outer_folds,
+                    seed=seed,
+                    verbose=True
+                )
+                
+                m = res["mean_metrics"]
+                results_rows.append({
+                    "Dataset": dataset_name,
+                    "Resampling": res_name,
+                    "Model": m_name,
+                    "Accuracy": round(m["Accuracy"], 3),
+                    "Recall": round(m["Recall"], 3),
+                    "Specificity": round(m["Specificity"], 3),
+                    "Precision": round(m["Precision"], 3),
+                    "F1-Score": round(m["F1-Score"], 3),
+                    "Time": format_duration(res["elapsed_seconds"])
+                })
+                
+                # Compute elapsed & remaining time
+                total_elapsed = time.time() - matrix_start_time
+                avg_time_per_model = total_elapsed / current_idx
+                remaining_models = total_experiments - current_idx
+                est_remaining_seconds = avg_time_per_model * remaining_models
+                
+                # Print explicit timer status
+                if remaining_models > 0:
+                    print(f"    --> Progress: {current_idx}/{total_experiments} | Elapsed: {format_duration(total_elapsed)} | Est. Remaining Time (ETA): {format_duration(est_remaining_seconds)}\n")
+                else:
+                    print(f"    --> Completed all {total_experiments} models in {format_duration(total_elapsed)}!\n")
+                
+                pbar.set_postfix({
+                    "Last F1": f"{m['F1-Score']:.3f}",
+                    "ETA": format_duration(est_remaining_seconds) if remaining_models > 0 else "0s"
+                })
+                pbar.update(1)
+                
     df_results = pd.DataFrame(results_rows)
     return df_results
