@@ -1,0 +1,6 @@
+Metric,Baseline Mean,Enhanced Mean,Difference,t-Statistic,p-Value,Significant (p < 0.05)
+F1-Score,0.582,0.574,-0.008,-0.41,0.6879,No
+Recall,0.74,0.897,0.157,2.95,0.0162,Yes
+Accuracy,0.681,0.592,-0.089,-2.4,0.04,Yes
+Precision,0.481,0.429,-0.052,-1.69,0.1254,No
+Specificity,0.656,0.461,-0.194,-2.77,0.0217,Yes

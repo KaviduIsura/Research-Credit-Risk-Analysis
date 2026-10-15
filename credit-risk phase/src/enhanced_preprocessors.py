@@ -17,13 +17,14 @@ from sklearn.compose import ColumnTransformer
 # 1. Data Hygiene Cleaners
 # ---------------------------------------------------------------------------
 
-def clean_taiwan_hygiene(df_raw):
+def clean_taiwan_hygiene(df_raw, cat_cols=None, num_cols=None):
     """
     Applies data hygiene audit fixes to Taiwan Credit dataset:
       - Drops duplicate rows.
       - Collapses undocumented EDUCATION levels (0, 5, 6) into 4 ('Others').
       - Collapses undocumented MARRIAGE level (0) into 3 ('Others').
       - Renames PAY_0 -> PAY_1 for chronological sequence consistency.
+      - Synchronizes cat_cols and num_cols lists if provided.
     """
     df = df_raw.copy()
     
@@ -48,6 +49,18 @@ def clean_taiwan_hygiene(df_raw):
     if "PAY_0" in df.columns and "PAY_1" not in df.columns:
         df = df.rename(columns={"PAY_0": "PAY_1"})
         
+    clean_cat = None
+    if cat_cols is not None:
+        clean_cat = ["PAY_1" if c == "PAY_0" else c for c in cat_cols if c != "ID"]
+        
+    clean_num = None
+    if num_cols is not None:
+        clean_num = [c for c in num_cols if c != "ID"]
+        
+    if cat_cols is not None and num_cols is not None:
+        return df, n_dups, clean_cat, clean_num
+    elif cat_cols is not None:
+        return df, n_dups, clean_cat
     return df, n_dups
 
 

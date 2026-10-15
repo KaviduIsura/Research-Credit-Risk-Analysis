@@ -1,0 +1,8 @@
+Model,Variant,AvgThreshold,Accuracy,Recall,Precision,Specificity,F1-Score,MCC,PR-AUC,ROC-AUC,FinancialCost
+Random Forest,Cost-Sensitive (enhanced_none),0.31,0.592,0.897,0.429,0.461,0.574,0.353,0.651,0.796,53.2
+Random Forest,SMOTE-NC (enhanced_smotenc),0.28,0.582,0.877,0.42,0.456,0.562,0.328,0.628,0.786,56.6
+XGBoost,Cost-Sensitive (enhanced_none),0.15,0.577,0.91,0.412,0.434,0.566,0.338,0.666,0.807,53.1
+XGBoost,SMOTE-NC (enhanced_smotenc),0.15,0.607,0.877,0.429,0.491,0.574,0.352,0.639,0.787,54.1
+Logistic Regression,Cost-Sensitive (enhanced_none),0.27,0.58,0.883,0.411,0.45,0.56,0.321,0.599,0.784,56.0
+Logistic Regression,SMOTE-NC (enhanced_smotenc),0.2,0.598,0.857,0.422,0.487,0.563,0.327,0.607,0.77,57.4
+MLP,Cost-Sensitive (enhanced_none),0.15,0.622,0.817,0.436,0.539,0.564,0.336,0.61,0.781,59.8
