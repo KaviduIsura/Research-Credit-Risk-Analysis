@@ -8,9 +8,9 @@ import sys
 SEED = 42
 
 # Execution mode toggle: True for fast verification, False for full production runs
-QUICK_TEST = True
+QUICK_TEST = False
 
-DATASETS = ["German", "Taiwan"]
+DATASETS = ["German"]
 
 MODELS_USED = {
     "German": ["LogReg", "RandomForest", "XGBoost", "MLP"],
