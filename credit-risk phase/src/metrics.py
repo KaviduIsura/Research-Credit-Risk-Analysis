@@ -1,67 +1,66 @@
 """
-Metric calculation, custom financial cost functions, and scoring interfaces.
+Evaluation Metrics for Credit Risk Prediction.
+Strictly implements Equations (19) to (23) from Section 3.7 of the research paper:
+  - Accuracy (Eq. 19)
+  - Precision (Eq. 20)
+  - Recall / Sensitivity (Eq. 21)
+  - Specificity (Eq. 22)
+  - F1-Score (Eq. 23)
 """
 
 import numpy as np
-from sklearn.metrics import (
-    confusion_matrix, precision_score, recall_score, f1_score,
-    matthews_corrcoef, roc_auc_score, average_precision_score,
-    brier_score_loss, accuracy_score, balanced_accuracy_score, make_scorer
-)
-from src.config import COST_FN, COST_FP
+from sklearn.metrics import confusion_matrix
 
-def specificity(y_true, y_pred):
-    """True Negative Rate: TN / (TN + FP)"""
-    tn, fp, fn, tp = confusion_matrix(y_true, y_pred, labels=[0, 1]).ravel()
-    return tn / (tn + fp) if (tn + fp) > 0 else 0.0
 
-def misclass_cost(y_true, y_pred):
+def compute_metrics(y_true, y_pred):
     """
-    German credit asymmetric cost function:
-    Misclassifying a defaulting borrower (FN) costs 5 units.
-    Rejecting a good applicant (FP) costs 1 unit.
-    Returns average misclassification cost per applicant.
+    Compute Accuracy, Recall, Specificity, Precision, and F1-Score
+    based on the binary confusion matrix:
+      TP: True Positives (Default correctly predicted)
+      TN: True Negatives (Good/Non-default correctly predicted)
+      FP: False Positives (Good incorrectly predicted as Default)
+      FN: False Negatives (Default incorrectly predicted as Good)
     """
-    tn, fp, fn, tp = confusion_matrix(y_true, y_pred, labels=[0, 1]).ravel()
-    return (COST_FN * fn + COST_FP * fp) / len(y_true)
-
-def get_scoring(ds):
-    """Returns comprehensive dictionary of cross_validate scorers."""
-    scorers = {
-        "accuracy": "accuracy",
-        "balanced_accuracy": "balanced_accuracy",
-        "recall": "recall",
-        "specificity": make_scorer(specificity),
-        "precision": make_scorer(precision_score, zero_division=0),
-        "f1": "f1",
-        "f1_macro": "f1_macro",
-        "f1_weighted": "f1_weighted",
-        "mcc": make_scorer(matthews_corrcoef),
-        "roc_auc": "roc_auc",
-        "pr_auc": "average_precision",
-        "brier": "neg_brier_score"
-    }
-    if ds == "German":
-        scorers["cost"] = make_scorer(misclass_cost, greater_is_better=False)
-    return scorers
-
-def thr_scorer(obj):
-    """Scorer factory for in-fold decision threshold optimization."""
-    if obj == "cost":
-        return make_scorer(misclass_cost, greater_is_better=False)
-    if obj == "mcc":
-        return make_scorer(matthews_corrcoef)
-    if obj == "f1":
-        return make_scorer(f1_score)
-    raise ValueError(f"Unknown threshold tuning objective: {obj}")
-
-def best_threshold(y, p, obj):
-    """Finds optimal decision threshold across a grid of 97 candidate cutoffs."""
-    grid = np.linspace(0.02, 0.98, 97)
-    if obj == "cost":
-        vals = [-misclass_cost(y, (p >= t).astype(int)) for t in grid]
-    elif obj == "mcc":
-        vals = [matthews_corrcoef(y, (p >= t).astype(int)) for t in grid]
+    y_true = np.asarray(y_true).astype(int)
+    y_pred = np.asarray(y_pred).astype(int)
+    
+    cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
+    tn, fp, fn, tp = cm.ravel()
+    
+    total = tn + fp + fn + tp
+    accuracy = (tp + tn) / total if total > 0 else 0.0
+    precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
+    recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+    specificity = tn / (tn + fp) if (tn + fp) > 0 else 0.0
+    
+    if precision + recall > 0:
+        f1 = 2.0 * (precision * recall) / (precision + recall)
     else:
-        vals = [f1_score(y, (p >= t).astype(int)) for t in grid]
-    return float(grid[int(np.argmax(vals))])
+        f1 = 0.0
+        
+    return {
+        "Accuracy": float(accuracy),
+        "Recall": float(recall),
+        "Specificity": float(specificity),
+        "Precision": float(precision),
+        "F1-Score": float(f1)
+    }
+
+
+def aggregate_fold_metrics(fold_metrics_list):
+    """
+    Aggregates a list of metric dicts across K cross-validation folds.
+    Returns:
+      mean_dict: Mean value for each metric.
+      std_dict: Standard deviation for each metric.
+    """
+    keys = ["Accuracy", "Recall", "Specificity", "Precision", "F1-Score"]
+    mean_dict = {}
+    std_dict = {}
+    
+    for k in keys:
+        vals = [m[k] for m in fold_metrics_list]
+        mean_dict[k] = float(np.mean(vals))
+        std_dict[k] = float(np.std(vals))
+        
+    return mean_dict, std_dict

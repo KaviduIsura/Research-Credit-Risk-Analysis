@@ -1,9 +1,0 @@
-attribute,group,n,base_rate,selection_rate,TPR,FPR
-German: Age (<25),Age < 25,149,0.409,0.846,0.951,0.773
-German: Age (<25),Age >= 25,851,0.281,0.632,0.891,0.531
-German: Foreign Worker,Domestic,37,0.108,0.324,1.0,0.242
-German: Foreign Worker,Foreign,963,0.307,0.677,0.902,0.577
-Taiwan: Sex,Female,18091,0.208,0.164,0.47,0.084
-Taiwan: Sex,Male,11874,0.242,0.217,0.525,0.119
-Taiwan: Age (<30),Age < 30,9603,0.229,0.195,0.508,0.103
-Taiwan: Age (<30),Age >= 30,20362,0.218,0.18,0.487,0.095

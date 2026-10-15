@@ -1,124 +1,128 @@
 """
-Data loading, validation, and hygiene auditing module.
-Handles German Credit and Taiwan Credit Card Default datasets.
+Data Loaders for German Credit and Taiwan Credit Datasets.
+Adheres strictly to dataset schemas defined in Section 3.1 (Tables 1, 2, 3) of the research paper.
 """
 
 import os
-import glob
+from pathlib import Path
 import pandas as pd
 import numpy as np
-from src.config import DATA_DIR, SEED, QUICK_TEST, QUICK_ROWS
+from src.config import DATA_RAW_DIR, SEED
 
-CLEAN_LOG = []
-
-GERMAN_COLS = [
-    "checking_status", "duration", "credit_history", "purpose", "credit_amount",
-    "savings", "employment", "installment_rate", "personal_status", "other_debtors",
-    "residence_since", "property", "age", "other_installment_plans", "housing",
-    "existing_credits", "job", "num_dependents", "telephone", "foreign_worker", "target"
+# German Credit feature definitions (Table 1 of paper)
+GERMAN_COLUMNS = [
+    "StatusOfCheckingAccount",
+    "DurationInMonths",
+    "CreditHistory",
+    "LoanPurpose",
+    "CreditAmount",
+    "SavingsAccountBonds",
+    "EmploymentDuration",
+    "InstallmentRatePercentage",
+    "PersonalStatusSex",
+    "OtherDebtorsGuarantors",
+    "ResidenceDuration",
+    "PropertyType",
+    "AgeInYears",
+    "OtherInstallmentPlans",
+    "HousingType",
+    "ExistingCreditsCount",
+    "JobType",
+    "Dependents",
+    "Telephone",
+    "ForeignWorker",
+    "Target"
 ]
 
-def load_german_credit(data_dir=None):
-    """
-    Load and clean the German Credit dataset (1,000 instances, 20 attributes).
-    Target: 1 = Good credit (0), 2 = Bad credit/Default (1).
-    """
-    ddir = data_dir or DATA_DIR
-    path = os.path.join(ddir, "german.data")
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"German credit file not found at: {path}")
+GERMAN_NUMERICAL = [
+    "DurationInMonths",
+    "CreditAmount",
+    "InstallmentRatePercentage",
+    "ResidenceDuration",
+    "AgeInYears",
+    "ExistingCreditsCount",
+    "Dependents"
+]
 
-    df = pd.read_csv(path, sep=r"\s+", header=None, names=GERMAN_COLS)
-    
-    # Target remapping: 2 (bad) -> 1, 1 (good) -> 0
-    y = (df.pop("target") == 2).astype(int)
-    
-    missing_cnt = int(df.isna().sum().sum())
-    CLEAN_LOG.append(("German", "Missing values detected", missing_cnt))
-    
-    dup_cnt = int(df.duplicated().sum())
-    CLEAN_LOG.append(("German", "Duplicate rows removed", dup_cnt))
-    
-    keep = ~df.duplicated()
-    df, y = df[keep].reset_index(drop=True), y[keep].reset_index(drop=True)
-    
-    cat = [c for c in df.columns if not pd.api.types.is_numeric_dtype(df[c])]
-    num = [c for c in df.columns if c not in cat]
-    
-    return df, y, cat, num
+GERMAN_CATEGORICAL = [col for col in GERMAN_COLUMNS if col not in GERMAN_NUMERICAL and col != "Target"]
 
-def load_taiwan_credit(data_dir=None, quick_test=None, quick_rows=None, seed=None):
+# Taiwan Credit feature definitions (Table 2 of paper)
+TAIWAN_CATEGORICAL = ["SEX", "EDUCATION", "MARRIAGE", "PAY_0", "PAY_2", "PAY_3", "PAY_4", "PAY_5", "PAY_6"]
+TAIWAN_NUMERICAL = [
+    "LIMIT_BAL", "AGE",
+    "BILL_AMT1", "BILL_AMT2", "BILL_AMT3", "BILL_AMT4", "BILL_AMT5", "BILL_AMT6",
+    "PAY_AMT1", "PAY_AMT2", "PAY_AMT3", "PAY_AMT4", "PAY_AMT5", "PAY_AMT6"
+]
+
+
+def load_german_data(data_dir=DATA_RAW_DIR):
     """
-    Load and clean the Taiwan Credit Card Default dataset (30,000 instances, 23 attributes).
-    Applies data hygiene: removes 35 duplicates, collapses undocumented codes, renames PAY_0 -> PAY_1.
+    Load and parse the Statlog German Credit Dataset (1,000 instances, 20 features).
+    Target mapping:
+      Original UCI values: 1 = Good, 2 = Bad (Default).
+      Binary mapping: 0 = Good (70%), 1 = Bad/Default (30%).
     """
-    ddir = data_dir or DATA_DIR
-    q_test = QUICK_TEST if quick_test is None else quick_test
-    q_rows = QUICK_ROWS if quick_rows is None else quick_rows
-    rnd = SEED if seed is None else seed
+    filepath = Path(data_dir) / "german.data"
+    if not filepath.exists():
+        raise FileNotFoundError(f"German dataset not found at {filepath}")
 
-    candidates = glob.glob(os.path.join(ddir, "*default*credit*"))
-    if not candidates:
-        raise FileNotFoundError(f"Taiwan credit dataset file not found in: {ddir}")
-    path = candidates[0]
+    df = pd.read_csv(filepath, sep=r"\s+", names=GERMAN_COLUMNS, engine="python")
+    
+    # Binary mapping: 1 (Good) -> 0, 2 (Bad/Default) -> 1
+    df["Target"] = df["Target"].map({1: 0, 2: 1})
+    
+    X = df.drop(columns=["Target"])
+    y = df["Target"].astype(int)
+    
+    return X, y, GERMAN_CATEGORICAL, GERMAN_NUMERICAL
 
-    df = pd.read_csv(path) if path.lower().endswith(".csv") else pd.read_excel(path, header=1)
-    df = df.drop(columns=[c for c in df.columns if str(c).strip().upper() == "ID"])
+
+def load_taiwan_data(data_dir=DATA_RAW_DIR, sample_size=None, random_state=SEED):
+    """
+    Load and parse the Taiwan Credit Card Default Dataset (30,000 instances, 23 features).
+    Target mapping:
+      'default payment next month': 0 = Non-default (77.9%), 1 = Default (22.1%).
+    """
+    filepath = Path(data_dir) / "default of credit card clients.xls"
+    if not filepath.exists():
+        raise FileNotFoundError(f"Taiwan dataset not found at {filepath}")
+
+    # File contains header on row 1 (0-indexed row 1)
+    df = pd.read_excel(filepath, header=1)
     
-    target_col = [c for c in df.columns if "default" in str(c).lower()][0]
-    y = df.pop(target_col).astype(int)
-    
-    # Chronological consistency fix: PAY_0 is the September repayment status
-    df = df.rename(columns={"PAY_0": "PAY_1"})
-    
-    missing_cnt = int(df.isna().sum().sum())
-    CLEAN_LOG.append(("Taiwan", "Missing values detected", missing_cnt))
-    
-    # Recode undocumented categorical levels as noted in Phase 1 report
-    for col, bad_codes, to_val in [("EDUCATION", [0, 5, 6], 4), ("MARRIAGE", [0], 3)]:
-        count = int(df[col].isin(bad_codes).sum())
-        CLEAN_LOG.append(("Taiwan", f"{col} undocumented codes {bad_codes} recoded to {to_val} ('Others')", count))
-        df[col] = df[col].replace({b: to_val for b in bad_codes})
+    # Drop arbitrary identifier column if present
+    if "ID" in df.columns:
+        df = df.drop(columns=["ID"])
         
-    y_dup = pd.concat([df, y], axis=1).duplicated()
-    dup_count = int(y_dup.sum())
-    CLEAN_LOG.append(("Taiwan", "Duplicate rows removed", dup_count))
-    keep = ~y_dup
-    df, y = df[keep].reset_index(drop=True), y[keep].reset_index(drop=True)
-    
-    cat = ["SEX", "EDUCATION", "MARRIAGE"]
-    for c in cat:
-        df[c] = df[c].astype(str)
-    num = [c for c in df.columns if c not in cat]
-    
-    if q_test and q_rows and len(df) > q_rows:
-        idx = df.sample(q_rows, random_state=rnd).index
-        df, y = df.loc[idx].reset_index(drop=True), y.loc[idx].reset_index(drop=True)
-        CLEAN_LOG.append(("Taiwan", f"Quick-test subsample applied (rows: {q_rows})", len(df)))
-        
-    return df, y, cat, num
+    target_col = "default payment next month"
+    if target_col not in df.columns:
+        # Fallback to last column
+        target_col = df.columns[-1]
 
-def get_data_bundle(quick_test=None):
-    """Loads both datasets and returns data dict, clean audit dataframe, and summary table."""
-    data = {
-        "German": load_german_credit(),
-        "Taiwan": load_taiwan_credit(quick_test=quick_test)
-    }
+    # Subsample if sample_size is set (e.g. for QUICK_TEST mode)
+    if sample_size is not None and len(df) > sample_size:
+        df = df.sample(n=sample_size, random_state=random_state).reset_index(drop=True)
+
+    X = df.drop(columns=[target_col])
+    y = df[target_col].astype(int)
     
-    audit_df = pd.DataFrame(CLEAN_LOG, columns=["dataset", "step", "rows/values affected"])
+    # Feature category resolution
+    cat_cols = [c for c in TAIWAN_CATEGORICAL if c in X.columns]
+    num_cols = [c for c in TAIWAN_NUMERICAL if c in X.columns]
     
-    summary_rows = []
-    for ds, (X, y, cat, num) in data.items():
-        summary_rows.append({
-            "dataset": ds,
-            "rows": len(X),
-            "features": X.shape[1],
-            "categorical": len(cat),
-            "numeric": len(num),
-            "minority_default_pct": round(100 * y.mean(), 2)
-        })
-    summary_df = pd.DataFrame(summary_rows).set_index("dataset")
-    
-    prior_odds = {ds: float((1 - data[ds][1].mean()) / data[ds][1].mean()) for ds in data}
-    
-    return data, audit_df, summary_df, prior_odds
+    # Ensure remaining columns are tracked
+    for c in X.columns:
+        if c not in cat_cols and c not in num_cols:
+            num_cols.append(c)
+
+    return X, y, cat_cols, num_cols
+
+
+def load_dataset(dataset_name, data_dir=DATA_RAW_DIR, sample_size=None):
+    """Unified loader dispatch."""
+    if dataset_name.lower() == "german":
+        return load_german_data(data_dir=data_dir)
+    elif dataset_name.lower() == "taiwan":
+        return load_taiwan_data(data_dir=data_dir, sample_size=sample_size)
+    else:
+        raise ValueError(f"Unknown dataset: {dataset_name}. Must be 'German' or 'Taiwan'.")

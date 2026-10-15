@@ -1,3 +1,0 @@
-dataset,model,leaky_f1,in-fold_f1,leaky_recall,in-fold_recall,leaky_precision,in-fold_precision,leaky_mcc,in-fold_mcc,F1 inflation
-German,RandomForest,0.897,0.547,0.91,0.577,0.885,0.522,0.719,0.34,0.35
-Taiwan,RandomForest,0.924,0.5,0.926,0.616,0.922,0.423,0.797,0.329,0.424
