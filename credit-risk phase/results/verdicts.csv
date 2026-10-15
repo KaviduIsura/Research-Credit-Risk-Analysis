@@ -1,0 +1,11 @@
+dataset,metric,mine,authors,delta,band,verdict
+German,f1,0.587,0.937,-0.35,0.028,Authors better
+German,recall,0.697,0.929,-0.232,0.127,Authors better
+German,precision,0.523,0.945,-0.422,0.063,Authors better
+German,specificity,0.707,0.968,-0.261,0.147,Authors better
+German,accuracy,0.704,0.954,-0.25,0.069,Authors better
+Taiwan,f1,0.547,0.61,-0.063,0.02,Authors better
+Taiwan,recall,0.557,0.745,-0.188,0.02,Authors better
+Taiwan,precision,0.537,0.512,0.025,0.02,Mine better
+Taiwan,specificity,0.863,0.842,0.021,0.02,Mine better
+Taiwan,accuracy,0.796,0.821,-0.025,0.02,Authors better

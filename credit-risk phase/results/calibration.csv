@@ -1,0 +1,3 @@
+dataset,model,variant,brier_raw,brier_calibrated
+German,XGBoost,fixed_none,0.1742,0.1606
+Taiwan,XGBoost,fixed_none,0.1767,0.1341

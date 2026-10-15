@@ -10,7 +10,7 @@ SEED = 42
 # Execution mode toggle: True for fast verification, False for full production runs
 QUICK_TEST = False
 
-DATASETS = ["German"]
+DATASETS = ["German", "Taiwan"]
 
 MODELS_USED = {
     "German": ["LogReg", "RandomForest", "XGBoost", "MLP"],
