@@ -5,3 +5,5 @@ data/raw/*
 !data/raw/README.md
 results/*.json
 .pytest_cache/
+.DS_Store
+~.docx
